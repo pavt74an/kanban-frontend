@@ -19,7 +19,7 @@ const Login = () => {
       }
 
       localStorage.setItem('token', response.data.accessToken);
-      navigate('/boards');
+      navigate('/dashboard');
     } catch (error) {
       alert('Login failed: Invalid credentials');
       console.error('Login error:', error); // แสดง Error ใน console
