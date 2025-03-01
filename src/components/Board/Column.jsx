@@ -52,6 +52,15 @@ const Column = ({
     }
   };
 
+  const handleTaskUpdated = () => {
+    // Notify parent component that a task has been updated
+    if (onEditTask) {
+      // We don't have actual parameters here but this signals to parent
+      // that something changed and it should refresh data
+      onEditTask();
+    }
+  };
+
   // Drag and drop handlers
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -154,11 +163,10 @@ const Column = ({
             <Task
               key={task.task_id}
               task={task}
-              onEditTask={onEditTask}
-              onDeleteTask={onDeleteTask}
-              onMoveTask={onMoveTask}
+              onTaskUpdated={handleTaskUpdated}
+              columnId={column.column_id}
+              columns={allColumns}
               boardMembers={boardMembers}
-              allColumns={allColumns}
             />
           ))
         ) : (
