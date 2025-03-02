@@ -119,6 +119,8 @@ const Task = ({ task, onTaskUpdated, columnId, columns, boardMembers }) => {
     } finally {
       setIsLoading(false);
     }
+
+    window.location.reload();
   };
 
   const handleAddTag = async () => {

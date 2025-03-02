@@ -160,6 +160,7 @@ const BoardView = ({ board, onBack }) => {
 		} catch (error) {
 			console.error("Failed to delete column:", error);
 		}
+		window.location.reload();
 	};
 
 	// Handle task operations
