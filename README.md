@@ -28,6 +28,5 @@ Kanban Board แอปพลิเคชันสำหรับจัดกา�
 ## Tech Stack
 - ReactJS
 - Tailwind CSS
-- React DnD (Drag & Drop)
 - Axios
 - React Router
