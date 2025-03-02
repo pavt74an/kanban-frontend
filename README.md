@@ -1,13 +1,33 @@
-# React + Vite
+# Kanban Board Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
+Kanban Board แอปพลิเคชันสำหรับจัดการงานที่พัฒนาด้วย ReactJS และ Tailwind CSS ช่วยให้ผู้ใช้สามารถจัดการงานผ่านระบบบอร์ด คอลัมน์ และ Task 
 
-Currently, two official plugins are available:
+> **หมายเหตุ**: หากทำการเปลี่ยนแปลงแล้วไม่เห็นผลแบบ realtime โปรด refresh หน้าเว็บ
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+✅ **ระบบสมาชิก**
+- Register และ Login เข้าระบบ
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-"# kanban-frontend" 
+✅ **จัดการ Board**
+- สร้าง ลบ และเปลี่ยนชื่อ Board
+
+✅ **ทำงานร่วมกัน**
+- Invite สมาชิกให้เข้ามาทำงานใน Board
+
+✅ **จัดการ Column**
+- สร้าง ลบ และแก้ไขชื่อ Column
+
+✅ **จัดการ Task**
+- สร้าง ลบ แก้ไขชื่อ และปรับตำแหน่งของ Task
+- ใช้ Mouse ลาก-วางเพื่อปรับตำแหน่ง Task
+- เพิ่ม Tag ใน Task
+- เพิ่มสมาชิกผู้รับผิดชอบใน Task
+
+## Tech Stack
+- ReactJS
+- Tailwind CSS
+- React DnD (Drag & Drop)
+- Axios
+- React Router
