@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import BoardList from '.././components/Dashboard/BoardList';
+import BoardList from '../components/Dashboard/BoardList';
 import BoardView from '../components/Board/BoardView';
 import AddBoardModal from '../components/Modals/AddBoardModal';
 import EditBoardModal from '../components/Modals/EditBoardModal';
@@ -13,6 +14,7 @@ const Dashboard = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentBoard, setCurrentBoard] = useState(null);
   const [boardName, setBoardName] = useState('');
+  const navigate = useNavigate();
   
   useEffect(() => {
     fetchBoards();
@@ -63,17 +65,26 @@ const Dashboard = () => {
   };
 
   const handleDeleteBoard = async (boardId) => {
-    if (window.confirm('Are you sure you want to delete this board?')) {
-      try {
-        await api.delete(`/boards/${boardId}`);
-        setSelectedBoard(null);
-        fetchBoards();
-      } catch (error) {
-        console.error('Failed to delete board:', error);
-      }
+    if (!window.confirm('คุณแน่ใจหรือไม่ที่จะลบบอร์ดนี้?')) {
+      return;
+    }
+    
+    try {
+      console.log('กำลังลบบอร์ด:', boardId);
+      const response = await api.delete(`/boards/${boardId}`);
+      
+      // อัพเดทสถานะ UI
+      setSelectedBoard(null);
+      fetchBoards();
+      
+      alert('ลบบอร์ดเรียบร้อยแล้ว');
+    } catch (error) {
+      console.error('เกิดข้อผิดพลาดในการลบบอร์ด:', error);
+      
+      // แสดงข้อความแจ้งเตือนให้ลบข้อมูลภายในก่อน
+      alert('ไม่อนุญาตให้ลบบอร์ด โปรดลบคอลัมน์ งาน และสมาชิกทั้งหมดภายในบอร์ดก่อน จึงจะสามารถลบบอร์ดได้');
     }
   };
-
   const openEditModal = (board) => {
     setCurrentBoard(board);
     setBoardName(board.board_name || '');
@@ -84,23 +95,38 @@ const Dashboard = () => {
     setSelectedBoard(board);
   };
 
+  const handleLogout = () => {
+    // Clear the access token from localStorage
+    localStorage.removeItem('accessToken');
+    // Also clear any other auth-related items if they exist
+    localStorage.removeItem('token');
+    // Redirect to the login page
+    navigate('/');
+  };
+
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Header */}
       <header className="bg-blue-600 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-white">My Boards</h1>
+          <button 
+            onClick={handleLogout}
+            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded transition-colors duration-200"
+          >
+            Logout
+          </button>
         </div>
       </header>
       
       {selectedBoard ? (
-        // ส่วนแสดง Board View
+        // Board View component
         <BoardView 
           board={selectedBoard} 
           onBack={() => setSelectedBoard(null)}
         />
       ) : (
-        // ส่วนแสดง Dashboard View
+        // Dashboard View
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {/* Actions Bar */}
           <div className="flex justify-between items-center mb-8">
@@ -118,7 +144,7 @@ const Dashboard = () => {
             </div>
           </div>
           
-          {/* แสดงรายการ Boards */}
+          {/* Board List */}
           <BoardList 
             boards={boards} 
             isLoading={isLoading} 

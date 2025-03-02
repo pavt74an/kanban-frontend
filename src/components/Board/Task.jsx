@@ -55,17 +55,69 @@ const Task = ({ task, onTaskUpdated, columnId, columns, boardMembers }) => {
     // window.location.reload();
   };
 
+  
   const handleDeleteTask = async () => {
-    if (window.confirm("Are you sure you want to delete this task?")) {
-      setIsLoading(true);
-      try {
-        await api.delete(`/tasks/${task.task_id}`);
-        if (onTaskUpdated) onTaskUpdated();
-      } catch (error) {
-        console.error("Failed to delete task:", error);
-      } finally {
-        setIsLoading(false);
+    if (!window.confirm("คุณแน่ใจหรือไม่ที่จะลบงานนี้?")) return;
+    
+    setIsLoading(true);
+    try {
+      console.log(`เริ่มกระบวนการลบงาน: ${task.task_id}`);
+      
+      // 1. ตรวจสอบว่ามีการมอบหมายงานให้ผู้ใช้หรือไม่
+      console.log("ตรวจสอบการมอบหมายงาน...");
+      const taskDetailsResponse = await api.get(`/tasks/${task.task_id}`);
+      
+      if (taskDetailsResponse.data && taskDetailsResponse.data.assignedUsers) {
+        const assignedUsers = taskDetailsResponse.data.assignedUsers;
+        console.log(`พบผู้ใช้ที่ได้รับมอบหมายงาน ${assignedUsers.length} คน`);
+        
+        // ยกเลิกการมอบหมายงานทั้งหมด
+        for (const user of assignedUsers) {
+          const userId = user.user_id || user.id;
+          console.log(`กำลังยกเลิกการมอบหมายงานให้ผู้ใช้: ${userId}`);
+          await api.patch(`/tasks/${task.task_id}/unassign`, { userId });
+        }
       }
+      
+      // 3. ลบแท็กทั้งหมดที่เกี่ยวข้องกับงานนี้
+      console.log("กำลังลบแท็กที่เกี่ยวข้อง...");
+      const tagsResponse = await api.get(`/tags/task/${task.task_id}`);
+      
+      if (tagsResponse.data && Array.isArray(tagsResponse.data)) {
+        for (const tag of tagsResponse.data) {
+          const tagId = tag.tag_id || tag.id;
+          console.log(`กำลังลบแท็ก: ${tagId}`);
+          await api.delete(`/tags/${tagId}`);
+        }
+      }
+      
+      // 4. สุดท้าย ลบงาน
+      console.log("กำลังลบงาน...");
+      const deleteResponse = await api.delete(`/tasks/${task.task_id}`);
+      console.log("ผลลัพธ์การลบงาน:", deleteResponse);
+      
+      // อัพเดท UI
+      if (onTaskUpdated) onTaskUpdated();
+    } catch (error) {
+      console.error("Failed to delete task:", error);
+      
+      // แสดงข้อความแจ้งเตือนที่เหมาะสมกับผู้ใช้
+      let errorMessage = "ไม่สามารถลบงานได้";
+      
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+        console.error("Error status:", error.response.status);
+        
+        if (error.response.status === 500) {
+          errorMessage += " เนื่องจากมีข้อมูลที่เกี่ยวข้องกับงานนี้ที่ต้องลบก่อน";
+        } else {
+          errorMessage += ` (${error.response.status}: ${error.response.data?.message || "Unknown error"})`;
+        }
+      }
+      
+      alert(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -95,15 +147,18 @@ const Task = ({ task, onTaskUpdated, columnId, columns, boardMembers }) => {
     
     setIsLoading(true);
     try {
-      await api.delete(`/tags/${tagId}`);
-      setTags(tags.filter(tag => tag.tag_id !== tagId || tag.id !== tagId));
+      console.log(`Attempting to delete tag with ID: ${tagId}`);
+      const response = await api.delete(`/tags/${tagId}`);
+      console.log("Delete tag response:", response);
+      
+      setTags(tags.filter(tag => tag.tag_id !== tagId && tag.id !== tagId));
+      console.log("Tags after deletion:", tags);
     } catch (error) {
       console.error("Failed to delete tag:", error);
+      alert(`ไม่สามารถลบแท็กได้: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
-
-    // refresh page
     window.location.reload();
   };
 
