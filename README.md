@@ -1,12 +1,14 @@
 # Kanban Board Frontend
 
 ## Overview
-Kanban Board แอปพลิเคชันสำหรับจัดการงานที่พัฒนาด้วย ReactJS และ Tailwind CSS ช่วยให้ผู้ใช้สามารถจัดการงานผ่านระบบบอร์ด คอลัมน์ และ Task 
+Kanban Board แอปพลิเคชันสำหรับจัดการงานที่พัฒนาด้วย ReactJS และ Tailwind CSS ช่วยให้ผู้ใช้สามารถจัดการงานผ่าน kanban  
+
+[![Kanban Board Demo](https://img.youtube.com/vi/l2wbuyJe5bA/0.jpg)](https://youtu.be/l2wbuyJe5bA)
+*Click the image to watch the demo*
 
 > **หมายเหตุ**: หากทำการเปลี่ยนแปลงแล้วไม่เห็นผลแบบ realtime โปรด refresh หน้าเว็บ
 
 ## Features
-
 ✅ **ระบบสมาชิก**
 - Register และ Login เข้าระบบ
 
